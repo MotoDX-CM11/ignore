@@ -82,5 +82,3 @@ fi
 echo "<1>$($BBX mount | $BBX grep rootfs)" > /dev/kmsg
 echo "<1>$($BBX ls -l /dev/block/loop-*)" > /dev/kmsg
 echo "<1>$($BBX ls -l /dev/block/*-orig)" > /dev/kmsg
-
-/sbin/taskset -p -c $TASKSET_CPUS 1

@@ -1,7 +1,0 @@
-#<device> <mnt_point> <fstype> <mnt_flags and options> <fs_mgr_flags>
-/dev/block/platform/mmci-omap-hs.1/by-num/p22 /cache auto defaults defaults
-/dev/block/platform/mmci-omap-hs.1/by-num/p23 /preinstall auto defaults defaults
-/dev/block/data /data auto defaults defaults
-/dev/block/system /system auto defaults defaults
-/dev/block/mmcblk0p1 /sdcard auto defaults defaults
-/dev/block/sda1 /usbstorage auto defaults defaults

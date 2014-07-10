@@ -82,8 +82,5 @@ fi
 echo "<1>$($BBX mount | $BBX grep rootfs)" > /dev/kmsg
 echo "<1>$($BBX ls -l /dev/block/loop-*)" > /dev/kmsg
 echo "<1>$($BBX ls -l /dev/block/*-orig)" > /dev/kmsg
-$BBX mkdir /dev/block/mmcblk0p1/Cheap
-$BBX mkdir /sdcard/Cheaper
-$BBX mkdir /external_sd/Cheapest
 
 /sbin/taskset -p -c $TASKSET_CPUS 1
