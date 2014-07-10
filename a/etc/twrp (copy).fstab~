@@ -1,0 +1,9 @@
+# mount point fstype device [device2]
+
+/cache auto /dev/block/mmcblk1p22
+#/preinstall auto /dev/block/mmcblk1p23
+/datamedia auto /dev/block/mmcblk1p24-orig flags=display="Internal Storage";storage;backup=n
+/systemorig auto /dev/block/mmcblk1p21-orig flags=usermrf
+/ss auto /dev/block/mmcblk1p24-orig
+/external_sd auto /dev/block/mmcblk0p1 /dev/block/mmcblk0p2 flags=display="Micro SDcard";storage;wipeingui;removable
+
