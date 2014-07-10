@@ -182,17 +182,12 @@ if [ "$RUN_SS" = "1" ]; then
 		$BBX chmod 644 /tmp/*
 
 		# clear out local files
-		$BBX rm /*
 
-		# extract recovery ramdisk
-		cd /
-		$BBX gzip -dc $RECOVERY_DIR/ramdisk-recovery.img | $BBX cpio -iu
-		$BBX unzip -o $RECOVERY_DIR/2nd-init.zip -d /sbin
-		# awcrap
-
-		# copy back selinux/prop files
-		$BBX cp /tmp/* /
-		$BBX rm /tmp/*
+		$BBX mkdir /2ndboot
+		$BBX cp -f $CURRENT_SYS_DIR/bootstrap/2nd-boot/* /2ndboot
+		$BBX cp -f $CURRENT_SYS_DIR/bootstrap/binary/hbootuser /2ndboot/hbootuser
+		$BBX cp -f $CURRENT_SYS_DIR/bootstrap/modules/hbootmod.ko /2ndboot/hbootmod.ko
+		$BBX chmod 755 /2ndboot/*
 
 		$BBX chmod 750 /sbin/*
 		$BBX sync
@@ -205,16 +200,15 @@ if [ "$RUN_SS" = "1" ]; then
 		fi
 
 		# /sbin/hijack.killall
-		# Shit just got real.
 
  		$BBX insmod ./hbootmod.ko kill_dss=1
 
-		echo "<1>$(/sbin/taskset -p -c 0 1)" > /dev/kmsg
 		$BBX sync
 		if [ "$DEBUG_MODE" = "1" ]; then
 			logCurrentStatus
 		fi
-		echo "<1>$(/sbin/taskset -c 0 /sbin/2nd-init)" > /dev/kmsg
+		$BBX mknod /dev/hbootctrl c `$BB_STATIC cat /proc/devices | $BB_STATIC grep hboot | $BB_STATIC awk '{print $1}' ` 0
+		./hbootuser ./hboot_recovery.cfg
 		exit
 	fi
 
