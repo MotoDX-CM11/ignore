@@ -1,10 +1,10 @@
 # mount point fstype device [device2]
 
-/preinstall auto /dev/block/mmcblk1p23
-/cache auto /dev/block/platform/mmci-omap-hs.1/by-num/p22
-/system auto /dev/block/mmcblk1p21 flags=usermrf
-/data auto /dev/block/mmcblk1p24
-/datamedia auto /dev/block/mmcblk1p24-orig flags=display="Internal Storage";storage;backup=n
-/systemorig auto /dev/block/mmcblk1p21-orig flags=usermrf
-/ss auto /dev/block/mmcblk1p24-orig
-/external_sd auto /dev/block/mmcblk0p1 /dev/block/mmcblk0p2 flags=display="Micro SDcard";storage;wipeingui;removable
+/preinstall   auto  /dev/block/mmcblk1p23
+/cache        auto  /dev/block/mmcblk1p22
+/system       auto  /dev/block/mmcblk1p21                     flags=usermrf
+/data         auto  /dev/block/mmcblk1p24
+/datamedia    auto  /dev/block/mmcblk1p24-orig                flags=display="Internal Storage";storage;backup=n
+/systemorig   auto  /dev/block/mmcblk1p21-orig                flags=hidden;usermrf
+/ss           auto  /dev/block/mmcblk1p24-orig                flags=hidden
+/external_sd  auto  /dev/block/mmcblk0p1 /dev/block/mmcblk0p2 flags=display="Micro SDcard";storage;wipeingui;removable
