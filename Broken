@@ -1,0 +1,4 @@
+init from app
+getprop
+taskset
+bbx (Causes strange problems)

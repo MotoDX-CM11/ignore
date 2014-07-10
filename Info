@@ -1,0 +1,32 @@
+Safestrap and similar for DX
+
+Bugs:
+ wait
+
+New:
+ backup.sh
+ build-fs.sh
+ changeslot.sh
+ check-fs.sh
+ fixboot.sh
+ lfs
+ libcryptfsics.so
+ libcrypto.so
+ libkeyutils.so
+ libsec_ecryptfs.so
+ libsec_km.so
+ make_ext4fs
+ restore-ss.sh
+ ss-function.sh
+ strace
+ update-binary
+
+Terminal Help:
+   find . | cpio -o -H newc | gzip > ../ramdisk-recovery
+   gunzip -c ../ramdis* | cpio -i
+
+Broken:
+   init from app
+   getprop
+   taskset
+   bbx (Causes strange problems)
