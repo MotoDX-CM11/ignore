@@ -1,0 +1,60 @@
+#!/sbin/bbx sh
+PATH=/sbin
+SKIP_SERVICE=${1}
+
+unmountFS() {
+	UNMOUNT_FS_TYPE=$1
+	for i in $(bbx seq 1 10); do
+		TMP=$(bbx mount | bbx grep $UNMOUNT_FS_TYPE | bbx awk '{print $3}')
+		if bbx [[ -z "$TMP" ]] ; then
+			break;
+		fi
+		for j in $(bbx mount | bbx grep $UNMOUNT_FS_TYPE | bbx awk '{print $3}'); do
+			echo "<1>umount -l $j" > /dev/kmsg
+			bbx umount -l "$j"
+		done
+		bbx sleep 1
+	done
+}
+
+## BEGIN KILL ALL ##
+bbx sleep 1s
+
+# kill all services
+for i in $(getprop | bbx grep init.svc | bbx sed -r 's/^\[init\.svc\.(.+)\]:.*$/\1/'); do
+	if bbx [[ ! "${i}" = "$SKIP_SERVICE" ]]; then
+		echo "<1>stopping ${i}" > /dev/kmsg
+		stop ${i}
+		bbx sleep 1
+	fi
+done
+
+# unmount /tmp
+echo "umount /tmp" > /dev/kmsg
+for i in $(bbx seq 1 10); do
+	TMP=$(bbx mount | bbx grep /tmp)
+	if bbx [[ -z "$TMP" ]] ; then
+		break
+	fi
+	bbx umount -l /tmp
+	bbx sleep 1
+done
+
+# unmount filesystems
+unmountFS yaffs2
+unmountFS ext3
+unmountFS ext4
+unmountFS vfat
+unmountFS f2fs
+
+# bbx umount /mnt/secure
+# bbx umount /mnt/asec
+# bbx umount /mnt/obb
+
+# kill any existing adbd processes
+bbx kill $(bbx ps | bbx grep adbd | bbx head -n 1 | bbx awk '{print $1}')
+bbx kill -s KILL $(bbx ps | bbx grep ueventd | bbx head -n 1 | bbx awk '{print $1}')
+
+# try to remove our sockets!
+bbx rm -f /dev/socket/*
+
