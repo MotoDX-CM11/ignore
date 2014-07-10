@@ -30,3 +30,4 @@ Broken:
    getprop
    taskset
    bbx (Causes strange problems)
+   e2fsck not done yet
