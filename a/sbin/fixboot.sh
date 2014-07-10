@@ -1,6 +1,6 @@
 #!/sbin/bbx sh
 # By: Hashcode
-BBX=/sbin/bbx
+BBX=/sbin/busybox
 SS_CONFIG=/ss.config
 echo "<1>Starting Safestrap fixboot.sh" > /dev/kmsg
 
