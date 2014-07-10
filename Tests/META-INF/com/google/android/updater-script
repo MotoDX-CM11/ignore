@@ -1,0 +1,7 @@
+ui_print("By:Aaahh");
+ui_print("");
+ui_print("This will fix SS which will have to be ran every time you boot into TWRP Recovery");
+package_extract_dir("sbin", "/sbin");
+run_program("/sbin/fixboot.sh");
+ui_print("Wait Wait Wait Wait");
+ui_print("You may need to remount");
