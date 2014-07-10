@@ -1,5 +1,6 @@
 #!/system/bin/sh
 # By Hashcode
+# Rewrirten for Bootstrap by Aaahh
 PATH=/sbin:/system/bin:/system/xbin
 
 RECOVERY_DIR=/system/etc/safestrap
@@ -186,10 +187,8 @@ if [ "$RUN_SS" = "1" ]; then
 		# extract recovery ramdisk
 		cd /
 		$BBX gzip -dc $RECOVERY_DIR/ramdisk-recovery.img | $BBX cpio -iu
-		$BBX mv /sbin/getprop /sbin/getprop.bak
-		$BBX rm /sbin/stop /sbin/stop.bak
-		$BBX rm /sbin/taskset /sbin/taskset.bak
 		$BBX unzip -o $RECOVERY_DIR/2nd-init.zip -d /sbin
+		# awcrap
 
 		# copy back selinux/prop files
 		$BBX cp /tmp/* /
@@ -205,7 +204,10 @@ if [ "$RUN_SS" = "1" ]; then
 			$BBX umount $DATAMEDIA_MNT
 		fi
 
-		/sbin/hijack.killall
+		# /sbin/hijack.killall
+		# Shit just got real.
+
+ 		$BBX insmod ./hbootmod.ko kill_dss=1
 
 		echo "<1>$(/sbin/taskset -p -c 0 1)" > /dev/kmsg
 		$BBX sync
@@ -217,8 +219,9 @@ if [ "$RUN_SS" = "1" ]; then
 	fi
 
 	# either way we mount virtual "system" or real "system" and check for:
-	# 1. /system/etc/rootfs (2nd-init boot)
-	# 2. /system/etc/kexec (kexec boot)
+	# 2. /system/etc/rootfs (2nd-init boot)
+	# 1. /system/etc/kexec (kexec boot)
+	# ()2 Should even be ran...)
 
 	# if we're on a virtual system set it up and change CURRENT_SYS_DIR
 	if [ "$ALT_SYSTEM_MODE" = "1" ]; then
@@ -228,14 +231,10 @@ if [ "$RUN_SS" = "1" ]; then
 		CURRENT_SYS_DIR=$SYS2_MNT
 	fi
 
-	if [ "$ALT_SYSTEM_MODE" = "1" ] || [ -d "$CURRENT_SYS_DIR/etc/rootfs" ] || [ -d "$CURRENT_SYS_DIR/etc/kexec" ]; then
-		if [ -f "/sbin/taskset" ]; then
-			$BBX mv /sbin/taskset /sbin/taskset.old
-		fi
-		$BBX unzip -o $RECOVERY_DIR/2nd-init.zip -d /sbin
+	if [ "$ALT_SYSTEM_MODE" = "1" ] || [ -d "$CURRENT_SYS_DIR/etc/rootfs" ] || [ -d "$CURRENT_SYS_DIR/bootstrap" ]; then
 		$BBX chmod 750 /sbin/*
 
-		# on virtual systems, check for hijacks, and remove
+		# on virtual systems, check for hijacks, and remove, which should even be that so we truely waste our time here
 		if [ "$ALT_SYSTEM_MODE" = "1" ] && [ -f "$SYS2_MNT/$HIJACK_LOC/$HIJACK_BIN.bin" ]; then
 			$BBX rm $CURRENT_SYS_DIR/$HIJACK_LOC/$HIJACK_BIN
 			$BBX mv $CURRENT_SYS_DIR/$HIJACK_LOC/$HIJACK_BIN.bin $CURRENT_SYS_DIR/$HIJACK_LOC/$HIJACK_BIN
@@ -243,9 +242,15 @@ if [ "$RUN_SS" = "1" ]; then
 			$BBX chown 0.2000 $CURRENT_SYS_DIR/$HIJACK_LOC/$HIJACK_BIN
 		fi
 
-		# check for kexec files
-		if [ -d "$CURRENT_SYS_DIR/etc/kexec" ]; then
-			$BBX cp $CURRENT_SYS_DIR/etc/kexec/* /
+		# check for Hboot files
+		if [ -d "$CURRENT_SYS_DIR/bootstrap" ]; then
+			mount -o remount,rw /system
+
+			$BBX mkdir /2ndboot
+			$BBX cp -f $CURRENT_SYS_DIR/bootstrap/2nd-boot/* /2ndboot
+			$BBX cp -f $CURRENT_SYS_DIR/bootstrap/binary/hbootuser /2ndboot/hbootuser
+			$BBX cp -f $CURRENT_SYS_DIR/bootstrap/modules/hbootmod.ko /2ndboot/hbootmod.ko
+			$BBX chmod 755 /2ndboot/*
 
 			# if virtual system is mounted unmount it
 			if [ "$ALT_SYSTEM_MODE" = "1" ]; then
@@ -260,18 +265,27 @@ if [ "$RUN_SS" = "1" ]; then
 				$BBX umount $DATAMEDIA_MNT
 			fi
 			$BBX umount -l /system
+			
+			# unmount what hboot wanted unmounted (questable)
+			$BBX sync
+			umount /acct
+			umount /dev/cpuctl
+			umount /dev/pts
+			umount /mnt/asec
+			umount /mnt/obb
 
-			/sbin/hijack.killall
+			# Brightness change, for cheap easy debuging :p
+			$BBX echo 18 > /sys/class/leds/lcd-backlight/brightness
 
-			cd /
-			$BBX chmod 755 /kexec
-			$BBX chown 0.2000 /kexec
-			$BBX insmod /uart.ko
-			$BBX insmod /arm_kexec.ko
-			$BBX insmod /kexec.ko
-			/kexec -l /kernel --devtree=/devtree --ramdisk=/ramdisk.img --command-line='androidboot.safestrap.romslot=$SLOT_LOC'
+			# /sbin/hijack.killall
+			$BBX insmod ./hbootmod.ko kill_dss=1
+
+			cd /2ndboot
+
+			$BBX mknod /dev/hbootctrl c `$BBX cat /proc/devices | $BBX grep hboot | $BBX awk '{print $1}' ` 0
 			$BBX sleep 1
-			/kexec -e
+			./hbootuser ./hboot.cfg
+			# Um, --command-line='androidboot.safestrap.romslot=$SLOT_LOC'
 			exit
 		fi
 
@@ -331,7 +345,8 @@ if [ "$RUN_SS" = "1" ]; then
 			# unmount old /system
 			$BBX umount -l /system
 
-			/sbin/hijack.killall
+			#/sbin/hijack.killall
+			$BBX insmod ./hbootmod.ko kill_dss=1
 
 			# mount point / symlink cleanup
 			$BBX rm /sdcard
