@@ -1,4 +1,4 @@
-#!/sbin/bbx sh
+#!/sbin/sh
 # By: Hashcode
 PATH=/sbin:/system/xbin:/system/bin
 
