@@ -23,7 +23,6 @@ on init
     mkdir /system
     mkdir /data
     mkdir /cache
-    mkdir /preinstall
     mkdir /datamedia
     mkdir /systemorig
     mount tmpfs tmpfs /tmp
