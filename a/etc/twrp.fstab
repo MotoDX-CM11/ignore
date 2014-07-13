@@ -3,8 +3,8 @@
 /preinstall   auto  /dev/block/mmcblk1p23
 /cache        auto  /dev/block/mmcblk1p22
 /system       auto  /dev/block/mmcblk1p21                        flags=usermrf
-/data         auto  /dev/block/mmcblk1p24
-/datamedia    auto  /dev/block/mmcblk1p24-orig                   flags=display="Internal Storage";storage;backup=n
+/data         ext4  /dev/block/mmcblk1p24
+/datamedia    ext4  /dev/block/mmcblk1p24-orig                   flags=display="Internal Storage";storage;backup=n
 /systemorig   auto  /dev/block/mmcblk1p21-orig                   flags=usermrf
 /ss           auto  /dev/block/mmcblk1p24-orig
 /external_sd  auto  /dev/block/mmcblk0p1 /dev/block/mmcblk0p2    flags=display="Micro SDcard";storage;wipeingui;removable
